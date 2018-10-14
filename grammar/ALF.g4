@@ -38,9 +38,8 @@ Letter: [A-Za-z];
 fragment Digit: [0-9];
 fragment Special: [&|^~+\-*/%?!:;,"'@=\\.$_#()<>[\]{}];
 
-// Comment: In_line_comment | Block_comment; // See Syntax 3, 6.2
-In_line_comment: '//' Character* [\n\r] -> channel (HIDDEN);
-Block_comment: '/*' Character* '*/' -> channel (HIDDEN);
+BlockComment:   '/*' .*? '*/' -> skip;
+LineComment:   '//' ~[\r\n]* -> skip;
 
 // Delimiter: [(){}[\]:;,]; // See Syntax 4, 6.3
 
@@ -105,7 +104,7 @@ event_operator:
 	| SimultaneousOrImmediatelyFollowedBy
 	| SimultaneousOrImmediatelyFollowingEachOther;
 
-// Assignment: '='; Condition: '?'; Control: '@'; 
+// Assignment: '='; Condition: '?'; Control: '@';
 
 // meta_operator: Assignment | Condition | Control;
 
