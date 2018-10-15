@@ -1,0 +1,76 @@
+ALF_REVISION "IEEE 1603-2003"
+
+LIBRARY sampleLibrary {
+
+    // global units for physical measurements
+    TIME { UNIT = 1e-9; }
+    FREQUENCY { UNIT = 1e6; }
+    DISTANCE { UNIT = 1e-6; }
+    AREA { UNIT = 1e-12; }
+    VOLTAGE { UNIT = 1; }
+    CURRENT { UNIT = 1e-3; }
+    ENERGY { UNIT = 1e-12; }
+    POWER { UNIT = 1e-3; }
+    CAPACITANCE { UNIT = 1e-12; }
+    RESISTANCE { UNIT = 1e3; }
+    INDUCTANCE { UNIT = 1e-9; }
+
+    // global definitions for PVT
+    PROCESS {
+        TABLE { nom snsp snwp wnsp wnwp }
+        DEFAULT = nom;
+    }
+    DERATE_CASE {
+        TABLE { nom bccom wccom bcind wcind bcmil wcmil }
+        DEFAULT = nom;
+    }
+    VOLTAGE VDD {
+    HEADER {
+        DERATE_CASE {
+            TABLE { nom bccom wccom bcind wcind bcmil wcmil }
+        }
+    }
+    TABLE { 1.5 1.7 1.3 1.6 1.4 1.9 1.1 }
+    DEFAULT = 1.5;
+    }
+
+    TEMPERATURE { MIN = -40; MAX = 125; DEFAULT = 25; }
+
+    // global thresholds for timing measurements
+    DELAY {
+        FROM { THRESHOLD = 0.5; }
+        TO { THRESHOLD = 0.5; }
+    }
+    SLEWRATE {
+        FROM { THRESHOLD { RISE = 0.3; FALL = 0.7; } }
+        TO { THRESHOLD { RISE = 0.6; FALL = 0.4; } }
+    }
+
+    // templates for cell characterization
+    TEMPLATE DelayPowerArc {
+        DELAY {
+            FROM { PIN = <FromPin>; }
+            TO { PIN = <ToPin>; }
+            HEADER {
+                CAPACITANCE { PIN = <ToPin>; TABLE { 0 0.5 1 } }
+                SLEWRATE { PIN = <FromPin>; TABLE { 0.1 1 } }
+            } TABLE { <DelayTable> }
+        }
+        SLEWRATE {
+            PIN = <ToPin>;
+            HEADER {
+                CAPACITANCE { PIN = <ToPin>; TABLE { 0 0.5 1 } }
+                SLEWRATE { PIN = <FromPin>; TABLE { 0.1 1 } }
+            } TABLE { <SlewTable> }
+        }
+        RESISTANCE = <Rdriver> {
+            PIN = <ToPin>;
+        }
+        ENERGY {
+            HEADER {
+                CAPACITANCE { PIN = <ToPin>; TABLE { 0 0.5 1 } }
+                SLEWRATE { PIN = <FromPin>; TABLE { 0.1 1 } }
+            } TABLE { <PowerTable> }
+        }
+    }
+}
