@@ -1,11 +1,14 @@
 grammar ALF;
 
+source_text: revision library;
+
 alf_statement:
 	type = alf_type (
 		left_index = index? name = alf_name right_index = index?
 	)? ('=' assign_value = alf_value)? (
 		';'
 		| '{' ( values += alf_value | ':' | ';')* '}'
+        | '{' from_to '}'
 		| '{' statements += alf_statement* '}'
 	); // See Syntax 1, 5.1
 
